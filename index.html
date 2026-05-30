@@ -291,6 +291,7 @@
       const covers=document.querySelectorAll('.cover');
       [data.c1img, data.c2img, data.c3img].forEach((img, i)=>{
         if(img){ covers[i].style.backgroundImage=`linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.7)), url('${img}')`; }
+      });
 
       renderPlans();
     }
