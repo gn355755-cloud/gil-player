@@ -258,7 +258,16 @@
     </div>
   </div>
 </div>
-<script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // COLE AQUI OS DADOS DO SEU SUPABASE
+    // Supabase > Project Settings > API
+    const SUPABASE_URL = 'https://wdypcpynqikfsrhlkuzr.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkeXBjcHlucWlrZnNyaGxrdXpyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxMDA5NTYsImV4cCI6MjA5NTY3Njk1Nn0.amP8cnJH7l_boSmOjg_0xKUa5hoPZcCFNfyyMf2q8sM';
+
+    const supabaseReady = SUPABASE_URL.startsWith('https://') && SUPABASE_ANON_KEY.length > 30;
+    const supabaseClient = supabaseReady ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
     const adminUser = 'gn355755@gmail.com';
     const adminPass = 'gilplayer007';
     const defaults = {
@@ -279,6 +288,56 @@
     };
     let data = JSON.parse(localStorage.getItem('gilSiteData') || 'null') || defaults;
     let currentClient = localStorage.getItem('gilCurrentClient') || '';
+
+    async function loadSiteDataFromSupabase(){
+      if(!supabaseReady){
+        apply();
+        return;
+      }
+
+      try{
+        const { data: row, error } = await supabaseClient
+          .from('site_config')
+          .select('data')
+          .eq('id', 'main')
+          .maybeSingle();
+
+        if(error) throw error;
+
+        if(row && row.data){
+          data = row.data;
+          localStorage.setItem('gilSiteData', JSON.stringify(data));
+        } else {
+          await supabaseClient.from('site_config').upsert({ id:'main', data });
+        }
+      } catch(err){
+        console.error('Erro ao carregar dados do Supabase:', err);
+        alert('Não consegui carregar o banco online. Vou usar os dados salvos neste navegador por enquanto.');
+      }
+
+      apply();
+    }
+
+    async function saveSiteDataToSupabase(){
+      localStorage.setItem('gilSiteData', JSON.stringify(data));
+
+      if(!supabaseReady){
+        alert('Alterações salvas apenas neste navegador. Cole a URL e a ANON KEY do Supabase no código para salvar online.');
+        return;
+      }
+
+      try{
+        const { error } = await supabaseClient
+          .from('site_config')
+          .upsert({ id:'main', data, updated_at:new Date().toISOString() });
+
+        if(error) throw error;
+        alert('Alterações salvas online no Supabase!');
+      } catch(err){
+        console.error('Erro ao salvar no Supabase:', err);
+        alert('Erro ao salvar no banco online. Confira a tabela, as políticas RLS, a URL e a ANON KEY do Supabase.');
+      }
+    }
 
     function apply() {
       document.querySelector('[data-edit="titulo"]').textContent=data.titulo;
@@ -374,7 +433,7 @@
         renderAdminPlans();
       }
     }
-    apply();
+    loadSiteDataFromSupabase();
 
     function openPlans(){document.getElementById('plansModal').style.display='flex'}
     function closePlans(){document.getElementById('plansModal').style.display='none'}
@@ -468,7 +527,7 @@
       if(clients[currentClient]){ clients[currentClient].history=[]; setClients(clients); updateHistory(); }
     }
 
-    function saveAll(){
+    async function saveAll(){
       collectAdminPlans();
       const savedPlans = Array.isArray(data.plans) ? data.plans : JSON.parse(JSON.stringify(defaults.plans));
       data={
@@ -486,9 +545,8 @@
         c3img:edC3Img.value.trim(),
         plans:savedPlans
       };
-      localStorage.setItem('gilSiteData', JSON.stringify(data));
+      await saveSiteDataToSupabase();
       apply();
-      alert('Alterações salvas neste navegador!');
     }
 
     function loadImageFile(input, targetId){
