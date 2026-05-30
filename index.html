@@ -286,7 +286,10 @@
         {tipo:'aparelho', nome:'TV Box', preco:'R$ 200,00', periodo:'Aparelho TV Box', beneficios:['Produto identificado como aparelho','Opção acessível para sua TV','Até 2x sem juros','Consulte modelos disponíveis'], botao:'Comprar aparelho'}
       ]
     };
-    let data = JSON.parse(localStorage.getItem('gilSiteData') || 'null') || defaults;
+    let data = { ...defaults, ...(JSON.parse(localStorage.getItem('gilSiteData') || 'null') || {}) };
+    if(!Array.isArray(data.plans) || !data.plans.length){
+      data.plans = JSON.parse(JSON.stringify(defaults.plans));
+    }
     let currentClient = localStorage.getItem('gilCurrentClient') || '';
 
     async function loadSiteDataFromSupabase(){
@@ -304,11 +307,16 @@
 
         if(error) throw error;
 
-        if(row && row.data){
-          data = row.data;
+        if(row && row.data && Object.keys(row.data).length){
+          data = { ...defaults, ...row.data };
+          if(!Array.isArray(data.plans) || !data.plans.length){
+            data.plans = JSON.parse(JSON.stringify(defaults.plans));
+          }
           localStorage.setItem('gilSiteData', JSON.stringify(data));
         } else {
+          data = JSON.parse(JSON.stringify(defaults));
           await supabaseClient.from('site_config').upsert({ id:'main', data });
+          localStorage.setItem('gilSiteData', JSON.stringify(data));
         }
       } catch(err){
         console.error('Erro ao carregar dados do Supabase:', err);
@@ -340,13 +348,17 @@
     }
 
     function apply() {
-      document.querySelector('[data-edit="titulo"]').textContent=data.titulo;
-      document.title=data.titulo+' - IPTV';
-      document.querySelector('[data-edit="headline"]').textContent=data.headline;
-      document.querySelector('[data-edit="slogan"]').textContent=data.slogan;
+      data = { ...defaults, ...data };
+      if(!Array.isArray(data.plans) || !data.plans.length){
+        data.plans = JSON.parse(JSON.stringify(defaults.plans));
+      }
+      document.querySelector('[data-edit="titulo"]').textContent=data.titulo || defaults.titulo;
+      document.title=(data.titulo || defaults.titulo)+' - IPTV';
+      document.querySelector('[data-edit="headline"]').textContent=data.headline || defaults.headline;
+      document.querySelector('[data-edit="slogan"]').textContent=data.slogan || defaults.slogan;
       if(data.logo){ document.getElementById('logo').src=data.logo; }
       const cs=document.querySelectorAll('.cover strong');
-      cs[0].textContent=data.c1; cs[1].textContent=data.c2; cs[2].textContent=data.c3;
+      cs[0].textContent=data.c1 || defaults.c1; cs[1].textContent=data.c2 || defaults.c2; cs[2].textContent=data.c3 || defaults.c3;
       const covers=document.querySelectorAll('.cover');
       [data.c1img, data.c2img, data.c3img].forEach((img, i)=>{
         if(img){ covers[i].style.backgroundImage=`linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.7)), url('${img}')`; }
