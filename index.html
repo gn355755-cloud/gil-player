@@ -99,6 +99,13 @@
     .logo-box img { width:130px; height:130px; object-fit:contain; border-radius:18px; filter:drop-shadow(0 0 16px rgba(126,236,255,.28)); background:rgba(255,255,255,.03); padding:8px; }
     .logo-box h3 { color:#8eeaff; font-size:1.35rem; margin-bottom:9px; text-transform:uppercase; letter-spacing:.6px; }
     .logo-box p { color:#dff8ff; line-height:1.48; }
+    .admin-section-title { margin:22px 0 10px; color:#8eeaff; font-size:1.2rem; text-transform:uppercase; letter-spacing:.5px; }
+    .admin-list { display:grid; gap:14px; margin:12px 0 18px; }
+    .admin-item { background:rgba(2,11,24,.82); border:1px solid rgba(159,235,255,.28); border-radius:16px; padding:14px; }
+    .admin-item h4 { color:#8eeaff; margin-bottom:10px; }
+    .admin-item .remove { background:#ff5f7a; color:#fff; border:0; padding:10px 12px; border-radius:10px; cursor:pointer; font-weight:900; }
+    .add-btn { background:rgba(142,234,255,.14); color:#dffaff; border:1px solid rgba(142,234,255,.55); padding:12px 14px; border-radius:12px; cursor:pointer; font-weight:900; margin:4px 0 14px; }
+
     @media (max-width:1050px) { .logo-grid { grid-template-columns:1fr; } }
     @media (max-width:560px) { .logo-box { grid-template-columns:1fr; text-align:center; } .logo-box img { margin:auto; } }
 
@@ -174,46 +181,9 @@
 <button class="plans-close" onclick="closePlans()">×</button>
 </div>
 <h3 class="plans-title">Planos mensais</h3>
-<div class="plans-grid">
-<div class="plan-card">
-<h3>Plano Básico</h3>
-<div class="price">R$ 30,00</div>
-<div class="period">Preço mensal</div>
-<ul><li>Acesso por 30 dias</li><li>Ideal para começar</li><li>Até 2x sem juros</li><li>Suporte para configuração</li></ul>
-<a class="plan-buy" href="https://wa.me/5516991528149?text=Ol%C3%A1%2C%20quero%20contratar%20o%20Plano%20B%C3%A1sico%20de%20R%2430%2C00%20mensal." target="_blank">Comprar agora</a>
-</div>
-<div class="plan-card">
-<h3>UniTV para Android</h3>
-<div class="price">R$ 35,00</div>
-<div class="period">Preço mensal</div>
-<ul><li>Para aplicativos Android</li><li>Acesso por 30 dias</li><li>Até 2x sem juros</li><li>Atendimento rápido</li></ul>
-<a class="plan-buy" href="https://wa.me/5516991528149?text=Ol%C3%A1%2C%20quero%20contratar%20o%20UniTV%20para%20Android%20de%20R%2435%2C00%20mensal." target="_blank">Comprar agora</a>
-</div>
-<div class="plan-card">
-<h3>UniTV 2 Telas</h3>
-<div class="price">R$ 45,00</div>
-<div class="period">Preço mensal</div>
-<ul><li>Uso em 2 telas</li><li>Acesso por 30 dias</li><li>Até 2x sem juros</li><li>Mais praticidade para família</li></ul>
-<a class="plan-buy" href="https://wa.me/5516991528149?text=Ol%C3%A1%2C%20quero%20contratar%20o%20UniTV%202%20Telas%20de%20R%2445%2C00%20mensal." target="_blank">Comprar agora</a>
-</div>
-</div>
+<div class="plans-grid" id="monthlyPlansGrid"></div>
 <h3 class="plans-title">Aparelhos</h3>
-<div class="devices-grid">
-<div class="plan-card">
-<h3>Aparelho UNITV</h3>
-<div class="price">R$ 600,00</div>
-<div class="period">Aparelho completo</div>
-<ul><li>Acesso vitalício incluso</li><li>Sem mensalidade no aparelho</li><li>Ideal para usar direto na TV</li><li>Até 5x sem juros</li><li>Consulte disponibilidade</li></ul>
-<a class="plan-buy" href="https://wa.me/5516991528149?text=Ol%C3%A1%2C%20tenho%20interesse%20no%20Aparelho%20UniTV%20de%20R%24600%2C00%20com%20acesso%20vital%C3%ADcio%20incluso%20e%20em%20at%C3%A9%205x%20sem%20juros." target="_blank">Comprar aparelho</a>
-</div>
-<div class="plan-card">
-<h3>TV Box</h3>
-<div class="price">R$ 200,00</div>
-<div class="period">Aparelho TV Box</div>
-<ul><li>Produto identificado como aparelho</li><li>Opção acessível para sua TV</li><li>Até 2x sem juros</li><li>Consulte modelos disponíveis</li></ul>
-<a class="plan-buy" href="https://wa.me/5516991528149?text=Ol%C3%A1%2C%20tenho%20interesse%20na%20TV%20Box%20de%20R%24200%2C00%20em%20at%C3%A9%202x%20sem%20juros." target="_blank">Comprar aparelho</a>
-</div>
-</div>
+<div class="devices-grid" id="devicesPlansGrid"></div>
 <p class="vitalicio-badge">✨ ACESSO VITALÍCIO INCLUSO NO APARELHO UNITV ✨</p>
 <p class="plan-note">Mensalidades podem ser feitas em até 2x sem juros. Aparelho UNITV com acesso vitalício incluso, sem mensalidade no aparelho e em até 5x sem juros. TV Box em até 2x sem juros.</p>
 </div>
@@ -275,6 +245,15 @@
       <label>Capa 3 - texto</label><input id="edC3"/>
       <label>Capa 3 - foto de lançamento</label><input id="edC3Img" placeholder="URL da imagem ou imagem enviada"/>
       <input type="file" accept="image/*" onchange="loadImageFile(this, 'edC3Img')"/>
+      <h3 class="admin-section-title">Editar tabela de planos</h3>
+      <p class="client-note">Altere nome, preço, descrição, benefícios e parcelamento. Para os benefícios, escreva um por linha.</p>
+      <div id="adminPlansList" class="admin-list"></div>
+      <button class="add-btn" type="button" onclick="addAdminPlan('mensal')">+ Adicionar plano mensal</button>
+
+      <h3 class="admin-section-title">Editar aparelhos</h3>
+      <div id="adminDevicesList" class="admin-list"></div>
+      <button class="add-btn" type="button" onclick="addAdminPlan('aparelho')">+ Adicionar aparelho</button>
+
       <button class="save" onclick="saveAll()">Salvar alterações</button>
     </div>
   </div>
@@ -282,7 +261,22 @@
 <script>
     const adminUser = 'gn355755@gmail.com';
     const adminPass = 'gilplayer007';
-    const defaults = { titulo:'Gil Player', headline:'Sua diversão em outro nível', slogan:'Tenha acesso fácil aos seus conteúdos favoritos, com atendimento rápido, qualidade e planos que cabem no seu bolso.', numero:'5516991528149', msg:'ola, estou interessado em adquirir o iptv quais os planos disponiveis?', c1:'Lançamento 2026', c2:'Séries em alta', c3:'Catálogo Premium', logo:'', c1img:'', c2img:'', c3img:'' };
+    const defaults = {
+      titulo:'Gil Player',
+      headline:'Sua diversão em outro nível',
+      slogan:'Tenha acesso fácil aos seus conteúdos favoritos, com atendimento rápido, qualidade e planos que cabem no seu bolso.',
+      numero:'5516991528149',
+      msg:'ola, estou interessado em adquirir o iptv quais os planos disponiveis?',
+      c1:'Lançamento 2026', c2:'Séries em alta', c3:'Catálogo Premium',
+      logo:'', c1img:'', c2img:'', c3img:'',
+      plans:[
+        {tipo:'mensal', nome:'Plano Básico', preco:'R$ 30,00', periodo:'Preço mensal', beneficios:['Acesso por 30 dias','Ideal para começar','Até 2x sem juros','Suporte para configuração'], botao:'Comprar agora'},
+        {tipo:'mensal', nome:'UniTV para Android', preco:'R$ 35,00', periodo:'Preço mensal', beneficios:['Para aplicativos Android','Acesso por 30 dias','Até 2x sem juros','Atendimento rápido'], botao:'Comprar agora'},
+        {tipo:'mensal', nome:'UniTV 2 Telas', preco:'R$ 45,00', periodo:'Preço mensal', beneficios:['Uso em 2 telas','Acesso por 30 dias','Até 2x sem juros','Mais praticidade para família'], botao:'Comprar agora'},
+        {tipo:'aparelho', nome:'Aparelho UNITV', preco:'R$ 600,00', periodo:'Aparelho completo', beneficios:['Acesso vitalício incluso','Sem mensalidade no aparelho','Ideal para usar direto na TV','Até 5x sem juros','Consulte disponibilidade'], botao:'Comprar aparelho'},
+        {tipo:'aparelho', nome:'TV Box', preco:'R$ 200,00', periodo:'Aparelho TV Box', beneficios:['Produto identificado como aparelho','Opção acessível para sua TV','Até 2x sem juros','Consulte modelos disponíveis'], botao:'Comprar aparelho'}
+      ]
+    };
     let data = JSON.parse(localStorage.getItem('gilSiteData') || 'null') || defaults;
     let currentClient = localStorage.getItem('gilCurrentClient') || '';
 
@@ -297,7 +291,87 @@
       const covers=document.querySelectorAll('.cover');
       [data.c1img, data.c2img, data.c3img].forEach((img, i)=>{
         if(img){ covers[i].style.backgroundImage=`linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.7)), url('${img}')`; }
+
+      renderPlans();
+    }
+
+    function getPlans(){
+      if(!Array.isArray(data.plans) || !data.plans.length){ data.plans = JSON.parse(JSON.stringify(defaults.plans)); }
+      return data.plans;
+    }
+
+    function escapeHtml(text){
+      return String(text || '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+    }
+
+    function whatsappLink(item){
+      const numero=(data.numero || defaults.numero).replace(/\D/g,'');
+      const texto=`Olá, quero contratar/comprar: ${item.nome} - ${item.preco}. Pode me passar mais detalhes?`;
+      return `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+    }
+
+    function planCard(item){
+      const beneficios=(item.beneficios || []).filter(Boolean).map(b=>`<li>${escapeHtml(b)}</li>`).join('');
+      return `<div class="plan-card">
+        <h3>${escapeHtml(item.nome)}</h3>
+        <div class="price">${escapeHtml(item.preco)}</div>
+        <div class="period">${escapeHtml(item.periodo)}</div>
+        <ul>${beneficios}</ul>
+        <a class="plan-buy" href="${whatsappLink(item)}" target="_blank">${escapeHtml(item.botao || 'Comprar agora')}</a>
+      </div>`;
+    }
+
+    function renderPlans(){
+      const plans=getPlans();
+      const monthly=document.getElementById('monthlyPlansGrid');
+      const devices=document.getElementById('devicesPlansGrid');
+      if(monthly){ monthly.innerHTML=plans.filter(p=>p.tipo==='mensal').map(planCard).join('') || '<p class="client-note">Nenhum plano mensal cadastrado.</p>'; }
+      if(devices){ devices.innerHTML=plans.filter(p=>p.tipo==='aparelho').map(planCard).join('') || '<p class="client-note">Nenhum aparelho cadastrado.</p>'; }
+    }
+
+    function renderAdminPlans(){
+      const plans=getPlans();
+      const monthly=document.getElementById('adminPlansList');
+      const devices=document.getElementById('adminDevicesList');
+      if(!monthly || !devices) return;
+      monthly.innerHTML=''; devices.innerHTML='';
+      plans.forEach((item, index)=>{
+        const html=`<div class="admin-item">
+          <h4>${item.tipo==='mensal' ? 'Plano mensal' : 'Aparelho'} ${index+1}</h4>
+          <label>Nome</label><input data-plan-index="${index}" data-field="nome" value="${escapeHtml(item.nome)}">
+          <div class="row"><div><label>Preço</label><input data-plan-index="${index}" data-field="preco" value="${escapeHtml(item.preco)}"></div><div><label>Período/Subtítulo</label><input data-plan-index="${index}" data-field="periodo" value="${escapeHtml(item.periodo)}"></div></div>
+          <label>Benefícios - um por linha</label><textarea data-plan-index="${index}" data-field="beneficios">${escapeHtml((item.beneficios || []).join('\n'))}</textarea>
+          <label>Texto do botão</label><input data-plan-index="${index}" data-field="botao" value="${escapeHtml(item.botao || 'Comprar agora')}">
+          <button class="remove" type="button" onclick="removeAdminPlan(${index})">Excluir</button>
+        </div>`;
+        if(item.tipo==='mensal') monthly.insertAdjacentHTML('beforeend', html); else devices.insertAdjacentHTML('beforeend', html);
       });
+      if(!monthly.innerHTML) monthly.innerHTML='<p class="client-note">Nenhum plano mensal cadastrado.</p>';
+      if(!devices.innerHTML) devices.innerHTML='<p class="client-note">Nenhum aparelho cadastrado.</p>';
+    }
+
+    function collectAdminPlans(){
+      document.querySelectorAll('[data-plan-index]').forEach(el=>{
+        const index=Number(el.dataset.planIndex);
+        const field=el.dataset.field;
+        if(!data.plans[index]) return;
+        if(field==='beneficios') data.plans[index][field]=el.value.split('\n').map(v=>v.trim()).filter(Boolean);
+        else data.plans[index][field]=el.value.trim();
+      });
+    }
+
+    function addAdminPlan(tipo){
+      collectAdminPlans();
+      data.plans.push({tipo, nome: tipo==='mensal' ? 'Novo Plano' : 'Novo Aparelho', preco:'R$ 0,00', periodo: tipo==='mensal' ? 'Preço mensal' : 'Aparelho', beneficios:['Benefício 1','Benefício 2'], botao: tipo==='mensal' ? 'Comprar agora' : 'Comprar aparelho'});
+      renderAdminPlans();
+    }
+
+    function removeAdminPlan(index){
+      if(confirm('Deseja excluir este item da tabela?')){
+        collectAdminPlans();
+        data.plans.splice(index,1);
+        renderAdminPlans();
+      }
     }
     apply();
 
@@ -338,7 +412,7 @@
       if(email===adminUser && pass===adminPass){
         document.getElementById('clientBox').style.display='none';
         document.getElementById('editBox').style.display='block';
-        edTitulo.value=data.titulo; edNumero.value=data.numero; edHeadline.value=data.headline; edSlogan.value=data.slogan; edMsg.value=data.msg; edLogo.value=data.logo || ''; edC1.value=data.c1; edC1Img.value=data.c1img || ''; edC2.value=data.c2; edC2Img.value=data.c2img || ''; edC3.value=data.c3; edC3Img.value=data.c3img || '';
+        edTitulo.value=data.titulo; edNumero.value=data.numero; edHeadline.value=data.headline; edSlogan.value=data.slogan; edMsg.value=data.msg; edLogo.value=data.logo || ''; edC1.value=data.c1; edC1Img.value=data.c1img || ''; edC2.value=data.c2; edC2Img.value=data.c2img || ''; edC3.value=data.c3; edC3Img.value=data.c3img || ''; renderAdminPlans();
         return;
       }
       const clients=getClients();
@@ -394,6 +468,8 @@
     }
 
     function saveAll(){
+      collectAdminPlans();
+      const savedPlans = Array.isArray(data.plans) ? data.plans : JSON.parse(JSON.stringify(defaults.plans));
       data={
         titulo:edTitulo.value,
         numero:edNumero.value.replace(/\D/g,''),
@@ -406,7 +482,8 @@
         c2:edC2.value,
         c2img:edC2Img.value.trim(),
         c3:edC3.value,
-        c3img:edC3Img.value.trim()
+        c3img:edC3Img.value.trim(),
+        plans:savedPlans
       };
       localStorage.setItem('gilSiteData', JSON.stringify(data));
       apply();
